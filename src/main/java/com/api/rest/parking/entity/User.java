@@ -25,8 +25,6 @@ public class User implements Serializable {
     @Column(name = "password", nullable = false, length = 200)
     private String password;
 
-    @Column(name = "role", nullable = false, length = 100)
-    private Role role;
 
     @Column(name = "create_date")
     private LocalDateTime createDate;

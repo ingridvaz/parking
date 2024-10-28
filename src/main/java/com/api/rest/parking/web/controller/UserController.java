@@ -2,13 +2,16 @@ package com.api.rest.parking.web.controller;
 
 import com.api.rest.parking.entity.User;
 import com.api.rest.parking.service.UserService;
+import com.api.rest.parking.web.dto.RequestUserDTO;
+import com.api.rest.parking.web.dto.UserPasswordDTO;
+import com.api.rest.parking.web.dto.mapper.ResponseUserDTO;
+import com.api.rest.parking.web.dto.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -18,15 +21,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user){
-        User users = userService.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(users);
+    public ResponseEntity<ResponseUserDTO> create(@RequestBody RequestUserDTO userCreateDTO){
+        User users = userService.save(UserMapper.toUser(userCreateDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toUserDto(users));
     }
 
     @PatchMapping("/list/{id}")
-    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user){
-        User updatedPassword = userService.updatePassword(id, user.getPassword());
-        return ResponseEntity.ok(user);
+    public ResponseEntity<ResponseUserDTO> updatePassword(@PathVariable Long id, @RequestBody UserPasswordDTO userPasswordDTO){
+        User updatedPassword = userService.updatePassword(id, userPasswordDTO.getActualPassword(), userPasswordDTO.getNewPassword(), userPasswordDTO.getConfirmPassword());
+        return ResponseEntity.ok(UserMapper.toUserDto(updatedPassword));
 
     }
 
@@ -37,9 +40,9 @@ public class UserController {
     }
 
     @GetMapping("/list/{id}")
-     public ResponseEntity<User> findById(@PathVariable Long id){
+     public ResponseEntity<ResponseUserDTO> findById(@PathVariable Long id){
         User user = userService.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        return ResponseEntity.status(HttpStatus.OK).body(UserMapper.toUserDto(user));
 
     }
 

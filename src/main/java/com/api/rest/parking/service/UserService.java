@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +30,17 @@ public class UserService {
     }
 
     @Transactional
-    public User updatePassword(Long id, String user) {
+    public User updatePassword(Long id, String actualPassword, String newPassword, String confirmPassword) {
+        if(!newPassword.equals(confirmPassword)){
+            throw new RuntimeException("Passwords is different");
+        }
+
         User userUpdate = findById(id);
-        userUpdate.setPassword(user);
+        if(!actualPassword.equals(userUpdate.getPassword())){
+            throw new RuntimeException("Your password is wrong");
+        }
+
+        userUpdate.setPassword(newPassword);
         return userUpdate;
     }
 }
